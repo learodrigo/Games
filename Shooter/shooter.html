@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Shooter gamer</title>
+    </head>
+    <body>
+
+        <script type="text/javascript">
+
+            var canvas;
+            var context;
+            // Player position, dimension and speed
+            var px = 100;
+            var py = 100;
+            var pd = 30;
+            var ps = 15;
+            // Enemy list, dimension and speed
+            var el = [];
+            var ed = 25;
+            var es = 5;
+            // Shoot list, dimension and speed
+            var sl = [];
+            var sd = 4;
+            var ss = 7;
+
+            window.onload = function(){
+                canvas = document.createElement("canvas");
+                canvas.width = 800;
+                canvas.height = 640;
+                document.body.appendChild(canvas);
+                context = canvas.getContext("2d");
+
+                setInterval(update, 1000/30);
+                setInterval(spawn, 2000);
+
+                document.addEventListener("keydown", keyPush);
+
+            } // onload
+
+            // Will create the enemies
+            function spawn(){
+                el.push({
+                    x: canvas.width,
+                    y: Math.random()*canvas.height
+                });
+            } // spawn
+
+            function update(){
+                // Background
+                context.fillStyle = "black";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Plyer
+                context.fillStyle = "white";
+                context.fillRect(px-pd/2, py-pd/2, pd, pd);
+
+                // Shot
+                context.fillStyle = "lime";
+                // Creating the line of Shot
+                for (var s = 0; s < sl.length; s++) {
+                    sl[s].x += ss;
+                    context.fillRect(sl[s].x-sd/2, sl[s].y-sd/2, sd, sd);
+                    for (var e = el.length-1; e >= 0; e--) {
+                        var dx = Math.abs(el[e].x-sl[s].x);
+                        var dy = Math.abs(el[e].y-sl[s].y);
+                        var dist = Math.sqrt(dx*dx+dy*dy);
+                        if (dist < (sd+ed)/2){
+                            el.splice(e, 1);
+                        } // if
+                    } // for enemy
+                } // for shooting
+
+                // Enemy
+                context.fillStyle = "red";
+                for (var e = 0; e < el.length; e++) {
+                    el[e].x -= es;
+                    context.fillRect(el[e].x-ed/2, el[e].y-ed/2, ed, ed);
+                    var dx = Math.abs(el[e].x-px);
+                    var dy = Math.abs(el[e].y-py);
+                    var dist = Math.sqrt(dx*dx+dy*dy);
+                    if (dist < (pd+ed)/2){
+                        sl = [];
+                        el = [];
+                        px = 100;
+                        py = 100;
+                        break;
+                    } // if
+                } // for
+            } // update
+
+            function keyPush(evt){
+                switch (evt.keyCode) {
+                    // code for barspace
+                    case 32:
+                        // Append a shoot the list from the player
+                        sl.push({
+                            x: px,
+                            y: py,
+                        });
+                        break;
+                    case 37:
+                        // Left on clockwise
+                        px -= ps;
+                        break;
+                    case 38:
+                        // Up on clockwise
+                        py -= ps;
+                        break;
+                    case 39:
+                        // Right on clockwise
+                        px += ps;
+                        break;
+                    case 40:
+                        // Down on clockwise
+                        py += ps;
+                        break;
+
+                } // switch
+            } // keyPush
+
+        </script>
+
+    </body>
+</html>

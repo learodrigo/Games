@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Snake game</title>
+    </head>
+
+    <canvas id="gc" width="400" height="400"></canvas>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            canv = document.getElementById("gc");
+            ctx = canv.getContext("2d");
+
+            // Add event for keyboard hooks
+            document.addEventListener("keydown", keyPush);
+
+            // Initiating game
+            setInterval(game, 1000/15);
+
+        } // window.onload
+
+        // Player position
+        var px = py = 10;
+        // Gridsize and Tail count
+        var gs = tc = 20;
+        // Apple (what you eat)
+        var ax = ay = 15;
+        // X and Y velocity
+        var xv = yv = 0;
+        // Var for getting the eaten apples
+        var trail = [];
+        // How many apples did it eat
+        var tail = 5;
+
+        function game(){
+            // X Position + X velocity
+            px += xv;
+            // Y Position + Y velocity
+            py += yv;
+
+            if (px < 0){
+                px = tc - 1;
+            } // if px < 0
+            if (px > tc - 1){
+                px = 0;
+            } // if px > 0
+
+            if (py < 0){
+                py = tc - 1;
+            } // if py < 0
+            if (py > tc - 1){
+                py = 0;
+            } // if py > 0
+
+            // Filling the context area
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canv.width, canv.height);
+
+            ctx.fillStyle = "lime";
+            // This is for the trail
+            for (var i = 0; i < trail.length; i++) {
+                // For each element of the array
+                // fill it:
+                // where the element in X is for the size of the grid
+                // where the element in Y is for the size of the grid
+                // with a width and height of the Gridsize minus 2
+                ctx.fillRect(trail[i].x*gs, trail[i].y*gs, gs-2, gs-2);
+
+                // If the last apple is in the position (or head)
+                if (trail[i].x == px && trail[i].y == py){
+                    // It starts over
+                    tail = 5;
+                } // if trail[i].x && trail[i].y
+            } // for
+
+            // Add the eaten apple
+            trail.push({
+                x: px,
+                y: py
+            });
+
+            // While the length of the trail id greater than the tail
+            while(trail.length > tail) {
+                // Remove one
+                trail.shift();
+            }
+
+            // If a ate an apple
+            if (ax == px && ay == py){
+                // Incrase the tail
+                tail++;
+                // Generate random position for the next apple
+                ax = Math.floor(Math.random()*tc);
+                ay = Math.floor(Math.random()*tc);
+            }
+
+            ctx.fillStyle = "red";
+            ctx.fillRect(ax*gs, ay*gs, gs-2, gs-2);
+        } // game
+
+
+        // Function to check which key was pressed
+        // then it changes the velocity of movement according to
+        // the momentum the key was pressed
+        function keyPush(evt){
+            // This swtich check the errors key in
+            // clockwise direction
+            switch (evt.keyCode) {
+                // Left key
+                case 37:
+                    xv = -1;
+                    yv = 0;
+                    break;
+                // Down key
+                case 38:
+                    xv = 0;
+                    yv = -1;
+                    break;
+                // Right key
+                case 39:
+                    xv = 1;
+                    yv = 0;
+                    break;
+                // Up key
+                case 40:
+                    xv = 0;
+                    yv = 1;
+                    break;
+            } // switch - case
+        } // keyPush
+    </script>
+</html>

@@ -1,0 +1,112 @@
+<script type="text/javascript">
+    var canv;
+    var ctx;
+
+    // Position and velocity for A
+    var x1, y1, x2, y2;
+    var xv1, yv1, xv2, yv2;
+    // Position and velocity for B
+    var x1b, y1b, x2b, y2b;
+    var xv1b, yv1b, xv2b, yv2b;
+
+    window.onload = function(){
+        canv = document.createElement("canvas");
+        canv.width = 1024;
+        canv.height = 768;
+        ctx = canv.getContext("2d");
+        document.body.appendChild(canv);
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        // A
+        x1 = Math.random()*canv.width;
+        y1 = Math.random()*canv.height;
+        x2 = Math.random()*canv.width;
+        y2 = Math.random()*canv.height;
+
+        // B
+        x1b = Math.random()*canv.width;
+        y1b = Math.random()*canv.height;
+        x2b = Math.random()*canv.width;
+        y2b = Math.random()*canv.height;
+
+        // Velocity A
+        xv1 = 5 - Math.random()*10;
+        yv1 = 5 - Math.random()*10;
+        xv2 = 5 - Math.random()*10;
+        yv2 = 5 - Math.random()*10;
+
+        // Velocity B
+        xv1b = 5 - Math.random()*10;
+        yv1b = 5 - Math.random()*10;
+        xv2b = 5 - Math.random()*10;
+        yv2b = 5 - Math.random()*10;
+
+
+        setInterval(update, 1000/30);
+    } // onload
+
+    function update(){
+        ctx.fillStyle = "black" ;
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        x1 += xv1;
+        y1 += yv1;
+        x1b += xv1b;
+        y1b += yv1b;
+        x2 += xv2;
+        y2 += yv2;
+        x2b += xv2b;
+        y2b += yv2b;
+
+        // Turn the direction in X of initial A
+        if (x1 < 0 || x1 > canv.width){
+            // Flip velocity
+            xv1 *= -1;}
+        // Turn the direction in Y of initial A
+        if (y1 < 0 || y1 > canv.height){
+            // Flip velocity
+            yv1 *= -1;}
+
+        // Turn the direction in X of ending A
+        if (x2 < 0 || x2 > canv.width){
+            // Flip velocity
+            xv2 *= -1;}
+        // Turn the direction in Y of ending A
+        if (y2 < 0 || y2 > canv.height){
+            // Flip velocity
+            yv2 *= -1;}
+
+
+        // Turn the direction in X of initial B
+        if (x1b < 0 || x1b > canv.width){
+            // Flip velocity
+            xv1b *= -1;}
+        // Turn the direction in Y of initial B
+        if (y1b < 0 || y1b > canv.height){
+            // Flip velocity
+            yv1b *= -1;}
+
+        // Turn the direction in X of ending B
+        if (x2b < 0 || x2b > canv.width){
+            // Flip velocity
+            xv2b *= -1;}
+        // Turn the direction in Y of ending B
+        if (y2b < 0 || y2b > canv.height){
+            // Flip velocity
+            yv2b *= -1;}
+
+        ctx.strokeStyle = "cyan";
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.strokeStyle = "yellow";
+        ctx.beginPath();
+        ctx.moveTo(x1b, y1b);
+        ctx.lineTo(x2b, y2b);
+        ctx.stroke();
+        ctx.closePath();
+    } //update
+</script>

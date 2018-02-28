@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Paratrooper game</title>
+    </head>
+    <body>
+
+        <script type="text/javascript">
+        var canv;
+        var canvasContext;
+        var playerHP = 20;
+        var score = 0;
+        const SCORE_FOR_PLANE_SHOT = 25;
+        const SCORE_FOR_TROOPER_SHOT = 50;
+        const SCORE_FOR_PARACHUTE_SHOT = 100;
+
+        // Player position, size
+        var px;
+        var py;
+        const PLAYER_WIDTH = 50;
+        const PLAYER_HEIGHT = 30;
+        // Canon length, angle, angular velocity canon def angle
+        var defaultCannonAng = -Math.PI/2;
+        var cannonAngLimit = Math.PI*0.45;
+        var cAng = defaultCannonAng;
+        var cLen = 40;
+        var cAngVel = 0.1;
+        var cEndX;
+        var cEndY;
+        var cReloadFrames = 5;
+        var cReloadLeft = 0;
+        // Shots
+        var shotList = [];
+        var cShotSpeed = 5.0;
+
+        // Enemy list, speed, width, height and constants
+        var enemyList = [];
+        var enemySpeed = 4;
+        const ENEMY_WIDTH = 80;
+        const ENEMY_HEIGHT = 40;
+
+        // Paratroopers
+        var trooperList = [];
+        const TROOPER_WIDTH = 20;
+        const TROOPER_HEIGHT = 30;
+        const TROOP_WALK_SPEED = 2;
+        const TROOP_FALL_SPEED_NO_CHUTE = 3.5;
+        const TROOP_FALL_SPEED_WITH_CHUTE = 1.5;
+        const DROP_BELOW_PLANE_MARGIN = 7;
+        const ENEMY_SPAWN_BAND_THICKNESS = 200;
+        const ENEMY_SPAWN_BAND_MARGIN = 50;
+        const DROP_MARGIN_FROM_CENTER = PLAYER_WIDTH + 20;
+        const DROP_MARGIN_FROM_EDGE = 50;
+        const CHUTE_THICKNESS = 100;
+        const CHUTE_MARGIN = 300;
+        const PARACHUTE_WIDTH = TROOPER_WIDTH + 15;
+        const PARACHUTE_HEIGHT = 20;
+
+        // Handlers
+        var holdLeft = false;
+        var holdRight = false;
+        var holdFire = false;
+
+        window.onload = function (){
+            canvas = document.createElement("canvas");
+            canvas.width = 800;
+            canvas.height = 600;
+            document.body.appendChild(canvas);
+            canvasContext = canvas.getContext("2d");
+
+            setInterval(update, 1000/30);
+            setInterval(enemySpawn, 1000);
+
+            cEndX = px = canvas.width/2; // just to mark the center
+            cEndY = py = canvas.height - PLAYER_HEIGHT;
+
+            document.addEventListener("keydown", keyPress);
+            document.addEventListener("keyup", keyRelease);
+
+        } //onload
+
+        function enemySpawn(){
+            var newEnemy = {};
+
+            newEnemy.removeMe = false;
+
+            if (Math.random() < 0.5){
+                newEnemy.x = -(ENEMY_WIDTH / 2);
+                newEnemy.xv = enemySpeed;
+                enemyList
+            } else {
+                newEnemy.x = canvas.width + (ENEMY_WIDTH / 2);
+                newEnemy.xv = -enemySpeed;
+            } // ifelse
+            newEnemy.y = Math.random()*ENEMY_SPAWN_BAND_THICKNESS + ENEMY_SPAWN_BAND_MARGIN;
+            newEnemy.yv = 0;
+
+            var validXPixelToDrop = 0;
+            var safeToDropHere = false;
+
+            while (safeToDropHere == false){
+                safeToDropHere = true;
+                validXPixelToDrop = Math.random() * canvas.width;
+
+                if (validXPixelToDrop < DROP_MARGIN_FROM_EDGE){
+                    safeToDropHere = false;
+                } else if (validXPixelToDrop > canvas.width - DROP_MARGIN_FROM_EDGE){
+                    safeToDropHere = false;
+                } else if (Math.abs(canvas.width/2 - validXPixelToDrop) < DROP_MARGIN_FROM_CENTER){
+                    safeToDropHere = false;
+                } // if - elseif - elseif
+            } // while
+
+            newEnemy.dropX  = validXPixelToDrop;
+            newEnemy.hasDroppedYet = false;
+
+            enemyList.push(newEnemy);
+        } // enemySpawn
+
+        function update(){
+            // Background
+            clearScreen();
+            // Enemies
+            handleEnemies();
+            // Player canon
+            handleShots();
+            handleInput();
+            drawPlayer();
+            // Displayer
+            debugDraw();
+
+        } //update
+
+
+        function resetGame(){
+            playerHP = 20;
+            score = 0;
+            shotList = [];
+            enemyList = [];
+            trooperList = [];
+        }
+
+
+        function debugDraw(){
+            canvasContext.fillStyle = "cyan";
+            var lineHeight = 15;
+            var drawTextOutY = 100;
+            canvasContext.fillText("Shots " + shotList.length, 100, drawTextOutY);
+            drawTextOutY += lineHeight;
+            canvasContext.fillText("Planes " + enemyList.length, 100, drawTextOutY);
+            drawTextOutY += lineHeight;
+            canvasContext.fillText("Troopers " + trooperList.length, 100, drawTextOutY);
+            drawTextOutY += lineHeight;
+            canvasContext.fillText("Base Strength " + playerHP, 100, drawTextOutY);
+            drawTextOutY += lineHeight;
+            canvasContext.fillText("Score " + score, 100, drawTextOutY);
+            drawTextOutY += lineHeight;
+
+        } // debugDraw
+
+
+
+        function spawnTroop(fromplane){
+            trooperList.push({
+                x: fromplane.x,
+                y: fromplane.y + DROP_BELOW_PLANE_MARGIN,
+                removeMe: false,
+                isChuteDrawn: false,
+                chuteY: Math.random() * CHUTE_THICKNESS + CHUTE_MARGIN,
+                alreadyGotDrawn: false,
+                isWalking: false
+            });
+        }
+
+
+
+        function handleEnemies(){
+            // Plane
+            canvasContext.fillStyle = "orange";
+            for (var i = 0; i < enemyList.length; i++) {
+                canvasContext.fillRect(enemyList[i].x - ENEMY_WIDTH / 2, enemyList[i].y - ENEMY_HEIGHT / 2, ENEMY_WIDTH, ENEMY_HEIGHT);
+                enemyList[i].x += enemyList[i].xv;
+                enemyList[i].y += enemyList[i].yv;
+
+                var movingLeft = enemyList[i].xv < 0;
+                var movingRight = enemyList[i].xv > 0;
+
+                if (enemyList[i].hasDroppedYet == false){
+                    if ( (movingLeft && enemyList[i].x < enemyList[i].dropX)  ||
+                         (movingRight && enemyList[i].x > enemyList[i].dropX) ){
+                            enemyList[i].hasDroppedYet = true;
+                            spawnTroop(enemyList[i]);
+                        } // if - crossing drop line
+                } else {
+                    if ( (movingLeft && enemyList[i].x < -ENEMY_WIDTH / 2) ||
+                         (movingRight && (enemyList[i].x > canvas.width + ENEMY_WIDTH/2)) ) {
+                             enemyList[i].removeMe = true;
+                          }
+                } // elseif - dropped-yet
+            } // for each plane
+
+
+                for (var i =  enemyList.length-1; i >= 0; i--) {
+                    if (enemyList[i].removeMe){
+                        enemyList.splice(i, 1);
+                    } // if
+                } // for
+
+
+            // Paratroopers
+            for (var i = 0; i < trooperList.length; i++) {
+
+                canvasContext.fillStyle = "red";
+                canvasContext.fillRect(trooperList[i].x - TROOPER_HEIGHT / 2, trooperList[i].y - TROOPER_HEIGHT, TROOPER_WIDTH, TROOPER_HEIGHT);
+
+                if (trooperList[i].isWalking){
+                    if (trooperList[i].x < px) {
+                        trooperList[i].x += TROOP_WALK_SPEED;
+                    }
+                    if (trooperList[i].x > px) {
+                        trooperList[i].x -= TROOP_WALK_SPEED;
+                    }
+                    if ( Math.abs(trooperList[i].x - px) < (PLAYER_WIDTH / 2 - TROOPER_WIDTH / 2) ){
+                        trooperList[i].removeMe = true;
+                        playerHP--;
+                        if (playerHP <= 0){
+                            resetGame();
+                        }
+                    }
+
+                    continue;
+                    // Skip rest of drawn and motion code which are only for air travel
+                }
+
+
+                if (trooperList[i].isChuteDrawn){
+                    canvasContext.fillStyle = "grey";
+                    trooperList[i].chuteX = trooperList[i].x - PARACHUTE_WIDTH / 2 - 5;
+                    trooperList[i].chuteY = trooperList[i].y - TROOPER_HEIGHT - PARACHUTE_HEIGHT;
+
+                    canvasContext.fillRect(trooperList[i].chuteX, trooperList[i].chuteY, PARACHUTE_WIDTH, PARACHUTE_HEIGHT);
+
+                }
+
+
+
+                if ( (trooperList[i].alreadyGotDrawn == false) &&
+                     (trooperList[i].y > trooperList[i].chuteY) ){
+
+                    trooperList[i].isChuteDrawn = true;
+                    trooperList[i].alreadyGotDrawn = true;
+                }
+
+                trooperList[i].y += (trooperList[i].isChuteDrawn ? TROOP_FALL_SPEED_WITH_CHUTE : TROOP_FALL_SPEED_NO_CHUTE)
+
+
+                // landing on the ground
+                if(trooperList[i].y > canvas.height){
+                    if (trooperList[i].isChuteDrawn){
+                        trooperList[i].y = canvas.height
+                        trooperList[i].isWalking = true;
+                    } else {
+                        trooperList[i].removeMe = true;
+                    }
+                } // if greater than canvas
+            } // for each paratroopers
+
+            for (var i =  trooperList.length-1; i >= 0; i--) {
+                if (trooperList[i].removeMe){
+                    trooperList.splice(i, 1);
+                } // if
+            } // for
+
+        } // handleEnemies
+
+        function handleShots(){
+            canvasContext.fillStyle = "yellow";
+            for (var i = 0; i < shotList.length; i++) {
+                canvasContext.fillRect(shotList[i].x-1, shotList[i].y-1, 3, 3);
+                shotList[i].x += shotList[i].speed * Math.cos(shotList[i].moveAng);
+                shotList[i].y += shotList[i].speed * Math.sin(shotList[i].moveAng);
+
+
+                // Not checking screen bottom since it can't shoot down
+                if (shotList[i].x < 0 ||
+                    shotList[i].x > canvas.width ||
+                    shotList[i].y < 0){
+
+                        shotList[i].removeMe = true;
+                    }
+
+
+
+                for (var e = 0; e < enemyList.length; e++) {
+                    if ( (shotList[i].y > enemyList[e].y - ENEMY_HEIGHT / 2) && (shotList[i].y < enemyList[e].y + ENEMY_HEIGHT / 2) &&
+                         (shotList[i].x > enemyList[e].x - ENEMY_WIDTH / 2) && (shotList[i].x < enemyList[e].x + ENEMY_WIDTH / 2) ){
+
+                             score += SCORE_FOR_PLANE_SHOT;
+                             enemyList[e].removeMe = true;
+                             shotList[i].removeMe = true;
+                         } // if
+                } // for enemyList
+
+
+                for (var t = 0; t < trooperList.length; t++) {
+                    if ( (shotList[i].y > trooperList[t].y - ENEMY_HEIGHT) && (shotList[i].y < trooperList[t].y) &&
+                         (shotList[i].x > trooperList[t].x - TROOPER_WIDTH / 2) && (shotList[i].x < trooperList[t].x + TROOPER_HEIGHT / 2) ){
+
+                             score += SCORE_FOR_TROOPER_SHOT;
+                             trooperList[t].removeMe = true;
+                             shotList[i].removeMe = true;
+                         } else if ( (shotList[i].y > trooperList[t].chuteY) && (shotList[i].y < trooperList[t].chuteY + PARACHUTE_HEIGHT) && (shotList[i].x > trooperList[t].chuteX / 2) && (shotList[i].x < trooperList[t].x + PARACHUTE_WIDTH) ){
+
+                             score += SCORE_FOR_PARACHUTE_SHOT;
+                             trooperList[t].isChuteDrawn = false;
+                         } // elseif
+                } // for trooperList
+            } // for
+
+
+            for (var i =  shotList.length-1; i >= 0; i--) {
+                if (shotList[i].removeMe){
+                    shotList.splice(i, 1);
+                } // if
+            } // for
+
+        } // handleShots
+
+        function clearScreen(){
+            canvasContext.fillStyle = "black";
+            canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        } // clearScreen
+
+        function handleInput(){
+             // Auto fire
+            if (holdFire){
+                if (cReloadLeft <= 0){
+                    shotList.push({
+                        x: cEndX,
+                        y: cEndY,
+                        moveAng: cAng,
+                        speed: cShotSpeed,
+                        removeMe: false
+                    });
+                    cReloadLeft = cReloadFrames;
+                } // if cReloadLeft
+            } // if holdFire
+
+            if (cReloadLeft > 0){
+                cReloadLeft--;
+            } // cReloadLeft > 0
+
+                // moving left
+            if (holdLeft){
+                cAng -= cAngVel;}
+                // moving right
+            if (holdRight){
+                cAng += cAngVel;}
+
+            if(cAng < (defaultCannonAng - cannonAngLimit)){
+                cAng = defaultCannonAng - cannonAngLimit}
+            if(cAng > (defaultCannonAng + cannonAngLimit)){
+                cAng = defaultCannonAng + cannonAngLimit}
+        } // handleInput
+
+        function drawPlayer(){
+            // Player cannon
+            canvasContext.strokeStyle = "lime";
+            canvasContext.lineWidth = 6;
+            canvasContext.beginPath();
+            canvasContext.moveTo(px, py);
+            cEndX = px+cLen*Math.cos(cAng);
+            cEndY = py+cLen*Math.sin(cAng);
+            canvasContext.lineTo(cEndX, cEndY);
+            canvasContext.stroke();
+            // Player base
+            canvasContext.fillStyle = "white";
+            canvasContext.fillRect(px - PLAYER_WIDTH/2, py, PLAYER_WIDTH, PLAYER_HEIGHT);
+        } //drawPlayer
+
+        function keyPress(evt){
+            switch (evt.keyCode) {
+                case 32:
+                    holdFire = true;
+                    break;
+                case 37:
+                    holdLeft = true;
+                    break;
+                case 39:
+                    holdRight = true;
+                    break;
+            } // switch
+        } // keyPress
+
+
+        function keyRelease(evt){
+            switch (evt.keyCode) {
+                case 32:
+                    holdFire = false;
+                    break;
+                case 37:
+                holdLeft = false;
+                    break;
+                case 39:
+                    holdRight = false;
+                    break;
+            } // switch
+        } // keyPress
+    </script>
+    </body>
+</html>
