@@ -10,6 +10,6 @@
   "author": "Lea Rodrigo",
   "license": "ISC",
   "dependencies": {
-    "serve": "^6.5.1"
+    "serve": "7.0.0"
   }
 }
