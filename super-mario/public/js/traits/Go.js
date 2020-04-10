@@ -13,7 +13,9 @@ export default class Go extends Trait {
         this.heading = 1;
     }
 
-    update(entity, deltaTime) {
+    // This technic of accessing an object property
+    // is called Object Deconstructing
+    update(entity, {deltaTime}) {
         const absX = Math.abs(entity.vel.x);
 
         if (this.dir !== 0) {

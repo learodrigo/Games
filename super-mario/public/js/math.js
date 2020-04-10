@@ -16,6 +16,7 @@ export class Matrix {
         if (col) {
             return col[y];
         }
+
         return undefined;
     }
 
