@@ -2,36 +2,33 @@ import Compositor from './Compositor.js';
 import EntityCollider from './EntityCollider.js';
 import TileCollider from './TileCollider.js';
 
-
 export default class Level {
-    constructor() {
-        this.gravity = 1500;
-        this.totalTime = 0;
+  constructor () {
+    this.gravity = 1500;
+    this.totalTime = 0;
+    this.comp = new Compositor();
+    this.entities = new Set();
+    this.entityCollider = new EntityCollider(this.entities);
+    this.tileCollider = null;
+  }
 
-        this.comp = new Compositor();
-        this.entities = new Set();
+  setCollinsionGrid (matrix){
+    this.tileCollider = new TileCollider(matrix);
+  }
 
-        this.entityCollider = new EntityCollider(this.entities);
-        this.tileCollider = null;
-    }
+  update (gameContext) {
+    this.entities.forEach(entity => {
+      entity.update(gameContext, this);
+    });
 
-    setCollinsionGrid(matrix){
-        this.tileCollider = new TileCollider(matrix);
-    }
+    this.entities.forEach(entity => {
+      entity.finalize();
+    });
 
-    update(gameContext) {
-        this.entities.forEach(entity => {
-            entity.update(gameContext, this);
-        });
+    this.entities.forEach(entity => {
+      this.entityCollider.check(entity);
+    });
 
-        this.entities.forEach(entity => {
-            entity.finalize();
-        });
-
-        this.entities.forEach(entity => {
-            this.entityCollider.check(entity);
-        });
-
-        this.totalTime += gameContext.deltaTime;
-    }
+    this.totalTime += gameContext.deltaTime;
+  }
 }

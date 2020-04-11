@@ -1,15 +1,3 @@
-// const audioContext = new AudioContext();
-// const audioBoard = new AudioBoard(audioContext);
-// const loadAudio = createAudioLoader(audioContext);
-// loadAudio('/audio/jump.ogg')
-// .then(buffer => {
-//   audioBoard.addAudio('jump', buffer);
-// });
-// loadAudio('/audio/stomp.ogg')
-// .then(buffer => {
-//   audioBoard.addAudio('stomp', buffer);
-// });
-
 import { loadJSON } from '../loaders.js';
 import AudioBoard from '../AudioBoard.js';
 
@@ -27,7 +15,7 @@ export function loadAudioBoard (name, audioContext) {
         const url = fx[name].url;
         // Keep track of the jobs and not return until done
         const job = loadAudio(url).then(buffer => {
-           audioBoard.addAudio(name, buffer);
+          audioBoard.addAudio(name, buffer);
         })
         jobs.push(job);
       });
