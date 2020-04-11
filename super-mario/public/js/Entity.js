@@ -14,7 +14,6 @@ export class Trait {
   constructor(name) {
     this.NAME = name;
     this.tasks = [];
-    this.sounds = new Set();
     this.events = new EventEmitter();
   }
 
@@ -31,20 +30,11 @@ export class Trait {
 
   obstruct() {}
 
-  playSounds (audioBoard, audioContext) {
-    this.sounds.forEach(name => {
-      audioBoard.playAudio(name, audioContext);
-    });
-
-    this.sounds.clear();
-  }
-
   update() {}
 }
 
 export default class Entity {
   constructor() {
-    this.audio = new AudioBoard();
     this.pos = new Vec2(0, 0);
     this.vel = new Vec2(0, 0);
     this.size = new Vec2(0, 0);
@@ -52,6 +42,8 @@ export default class Entity {
     this.bounds = new BoundingBox(this.pos, this.size, this.offset);
     this.lifetime = 0;
     this.traits = [];
+    this.audio = new AudioBoard();
+    this.sounds = new Set();
   }
 
   addTrait(trait) {
@@ -65,12 +57,6 @@ export default class Entity {
     });
   }
 
-  obstruct(side, match) {
-    this.traits.forEach(trait => {
-      trait.obstruct(this, side, match);
-    });
-  }
-
   draw() {}
 
   finalize() {
@@ -79,12 +65,26 @@ export default class Entity {
     });
   }
 
+  obstruct(side, match) {
+    this.traits.forEach(trait => {
+      trait.obstruct(this, side, match);
+    });
+  }
+
+  playSounds (audioBoard, audioContext) {
+    this.sounds.forEach(name => {
+      audioBoard.playAudio(name, audioContext);
+    });
+
+    this.sounds.clear();
+  }
+
   update(gameContext, level) {
     this.traits.forEach(trait => {
       trait.update(this, gameContext, level);
-      trait.playSounds(this.audio, gameContext.audioContext);
     });
 
+    this.playSounds(this.audio, gameContext.audioContext);
     this.lifetime += gameContext.deltaTime;
   }
 }

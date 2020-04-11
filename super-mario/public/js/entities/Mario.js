@@ -23,7 +23,6 @@ export function loadMario (audioContext) {
   });
 }
 
-
 function createMarioFactory (sprite, audio) {
   const runAnim = sprite.animations.get("run");
 
@@ -54,7 +53,7 @@ function createMarioFactory (sprite, audio) {
     sprite.draw(routeFrame(this), context, 0, 0, this.go.heading < 0);
   }
 
-  return function createMario() {
+  return function createMario () {
     const mario = new Entity();
 
     mario.audio = audio;

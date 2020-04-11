@@ -17,8 +17,9 @@ export default class Stomper extends Trait {
     }
 
     if (us.vel.y > them.vel.y) {
-      this.bounce(us, them);
-      this.sounds.add('stomp');
+      // We queue the bounce because of race condition in the collision
+      this.queue(() => this.bounce(us, them));
+      us.sounds.add('stomp');
       this.events.emit('stomp', us, them);
     }
   }

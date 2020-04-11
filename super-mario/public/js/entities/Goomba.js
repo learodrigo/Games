@@ -1,4 +1,4 @@
-import Entity, {Sides, Trait} from "../Entity.js";
+import Entity, { Sides, Trait } from "../Entity.js";
 import PendulumMove from "../traits/PendulumMove.js";
 import Physics from "../traits/Physics.js";
 import Solid from "../traits/Solid.js";
@@ -16,7 +16,7 @@ class Behaviour extends Trait {
   }
 
   // Feature detection
-  collides(us, them) {
+  collides (us, them) {
     if (us.killable.dead) {
       return;
     }
@@ -35,7 +35,7 @@ class Behaviour extends Trait {
 function createGoombaFactory (sprite) {
   const walkAnim = sprite.animations.get("walk");
 
-  function routeAnim(goomba) {
+  function routeAnim (goomba) {
     if (goomba.killable.dead) {
       return "flat";
     }
@@ -43,11 +43,11 @@ function createGoombaFactory (sprite) {
     return walkAnim(goomba.lifetime);
   }
 
-  function drawGoomba(context) {
+  function drawGoomba (context) {
     sprite.draw(routeAnim(this), context, 0, 0);
   }
 
-  return function createGoomba() {
+  return function createGoomba () {
     const goomba = new Entity();
 
     goomba.size.set(16, 16);

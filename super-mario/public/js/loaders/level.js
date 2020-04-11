@@ -72,8 +72,6 @@ function createBackgroundGrid (tiles, patterns) {
   return grid;
 }
 
-
-
 function* expandSpan (xStart, xLen, yStart, yLen) {
   const xEnd = xStart + xLen;
   const yEnd = yStart + yLen;
@@ -118,9 +116,9 @@ function* expandTiles (tiles, patterns) {
           yield* walkTiles(tiles, derivedX, derivedY);
         } else {
           yield {
-              tile,
-              x: derivedX,
-              y: derivedY,
+            tile,
+            x: derivedX,
+            y: derivedY,
           };
         } // else
       } // for expandRanges

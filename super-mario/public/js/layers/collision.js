@@ -17,8 +17,8 @@ function createTileCandidateLayer (tileCollider) {
   const resolvedTiles = [];
   const tileResolver = tileCollider.tiles;
   const tileSize = tileResolver.tileSize;
-
   const getByIndexOriginal = tileResolver.getByIndex;
+
   tileResolver.getByIndex = function getByIndexFake (x, y) {
     resolvedTiles.push({x, y});
     return getByIndexOriginal.call(tileResolver, x, y);
