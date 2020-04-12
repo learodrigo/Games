@@ -3,6 +3,13 @@ export class Matrix {
     this.grid = [];
   }
 
+  delete (x, y) {
+    const col = this.grid[x];
+    if (col) {
+      delete col[y];
+    };
+  }
+
   forEach (callback) {
     this.grid.forEach((column, x) => {
       column.forEach((value, y) => {
@@ -13,11 +20,7 @@ export class Matrix {
 
   get (x, y) {
     const col = this.grid[x];
-    if (col) {
-      return col[y];
-    }
-
-    return undefined;
+    return col ? col[y] : undefined;
   }
 
   set (x, y, value) {

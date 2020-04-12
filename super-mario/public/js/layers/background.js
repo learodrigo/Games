@@ -2,8 +2,8 @@ import TileResolver from "../TileResolver.js";
 
 export function createBackgroundLayer (level, tiles, sprites) {
   const resolver = new TileResolver(tiles);
-
   const buffer = document.createElement('canvas');
+
   buffer.width = 256 + 16;
   buffer.height = 240;
 
@@ -32,7 +32,6 @@ export function createBackgroundLayer (level, tiles, sprites) {
     const drawFrom = resolver.toIndex(camera.pos.x);
     const drawTo = drawFrom + drawWidth;
     redraw(drawFrom, drawTo);
-
     context.drawImage(buffer, -camera.pos.x % 16, -camera.pos.y);
   };
 }
