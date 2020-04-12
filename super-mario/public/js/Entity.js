@@ -1,7 +1,7 @@
 import { Vec2 } from "./math.js";
 import BoundingBox from "./BoundingBox.js"
 import AudioBoard from "./AudioBoard.js"
-import EventEmitter from "./EventEmitter.js";
+import EventBuffer from "./EventBuffer.js";
 
 export const Sides = {
   TOP: Symbol('top'),
@@ -11,61 +11,79 @@ export const Sides = {
 };
 
 export class Trait {
-  constructor(name) {
+  static EVENT_TASK = Symbol('taks');
+
+  constructor (name) {
     this.NAME = name;
-    this.tasks = [];
-    this.events = new EventEmitter();
+    this.listeners = [];
   }
 
-  finalize(){
-    this.tasks.forEach(task => task());
-    this.tasks.length = 0;
+  finalize (entity) {
+    this.listeners = this.listeners.filter(listener => {
+      entity.events.process(listener.name, listener.callback);
+      return --listener.count;
+    });
   }
 
-  queue(task) {
-    this.tasks.push(task);
+  listen (name, callback, count = Infinity) {
+    const listener = {name, callback, count};
+    this.listeners.push(listener);
   }
 
-  collides(us, them) {}
+  queue (task) {
+    this.listen(Trait.EVENT_TASK, task, 1);
+  }
 
-  obstruct() {}
+  collides (us, them) {}
 
-  update() {}
+  obstruct () {}
+
+  update () {}
 }
 
 export default class Entity {
-  constructor() {
+  constructor () {
+    this.audio = new AudioBoard();
+    this.sounds = new Set();
+
+    this.events = new EventBuffer();
+
     this.pos = new Vec2(0, 0);
     this.vel = new Vec2(0, 0);
     this.size = new Vec2(0, 0);
     this.offset = new Vec2(0, 0);
     this.bounds = new BoundingBox(this.pos, this.size, this.offset);
+
     this.lifetime = 0;
     this.traits = [];
-    this.audio = new AudioBoard();
-    this.sounds = new Set();
   }
 
-  addTrait(trait) {
+  addTrait (trait) {
     this.traits.push(trait);
     this[trait.NAME] = trait;
+    trait.entity = this;
   }
 
-  collides(candidate) {
+  collides (candidate) {
     this.traits.forEach(trait => {
       trait.collides(this, candidate);
     });
   }
 
-  draw() {}
+  draw () {}
 
-  finalize() {
+  finalize () {
+    this.events.emit(Trait.EVENT_TASK);
+
     this.traits.forEach(trait => {
-      trait.finalize();
+      trait.finalize(this);
     });
+
+    // Clearing the events
+    this.events.clear();
   }
 
-  obstruct(side, match) {
+  obstruct (side, match) {
     this.traits.forEach(trait => {
       trait.obstruct(this, side, match);
     });
@@ -79,7 +97,7 @@ export default class Entity {
     this.sounds.clear();
   }
 
-  update(gameContext, level) {
+  update (gameContext, level) {
     this.traits.forEach(trait => {
       trait.update(this, gameContext, level);
     });

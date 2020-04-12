@@ -1,6 +1,9 @@
 import { Sides, Trait } from '../Entity.js';
 
 export default class Stomper extends Trait {
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
+  static EVENT_STOMP = Symbol('stomp');
+
   constructor () {
     super('stomper');
     this.bounceSpeed = 400;
@@ -20,7 +23,7 @@ export default class Stomper extends Trait {
       // We queue the bounce because of race condition in the collision
       this.queue(() => this.bounce(us, them));
       us.sounds.add('stomp');
-      this.events.emit('stomp', us, them);
+      us.events.emit(Stomper.EVENT_STOMP, us, them);
     }
   }
 }
