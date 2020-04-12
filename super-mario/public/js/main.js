@@ -44,7 +44,10 @@ async function main (canvas) {
     level.comp.draw(context, camera);
   }
 
+  // Starting timer
   timer.start();
+  // Starting music
+  level.music.player.playTrack('main');
 }
 
 const canvas = document.getElementById('screen');
