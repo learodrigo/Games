@@ -1,6 +1,6 @@
 /**
- * With this module we create a middle layer between
- * the level and the music player
+ * With this module we create a middle layer
+ * between the level and the music player
  */
 export default class MusicController {
   constructor () {
@@ -9,5 +9,18 @@ export default class MusicController {
 
   setPlayer (player) {
     this.player = player;
+  }
+
+  playTheme (speed = 1) {
+    const audio = this.player.playTrack('main');
+    audio.playbackRate = speed;
+  }
+
+  playHurryTheme () {
+    const audio = this.player.playTrack('hurry');
+    audio.loop = false;
+    audio.addEventListener('ended', () => {
+      this.playTheme(1.3);
+    }, { once: true });
   }
 }

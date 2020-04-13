@@ -1,5 +1,6 @@
 import Compositor from './Compositor.js';
 import EntityCollider from './EntityCollider.js';
+import EventEmitter from './EventEmitter.js';
 import MusicController from './MusicController.js';
 import TileCollider from './TileCollider.js';
 
@@ -12,6 +13,7 @@ export default class Level {
     this.entityCollider = new EntityCollider(this.entities);
     this.tileCollider = new TileCollider();
     this.music = new MusicController();
+    this.events = new EventEmitter();
   }
 
   update (gameContext) {

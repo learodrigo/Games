@@ -33,7 +33,7 @@ export default class Jump extends Trait {
     }
   }
 
-  update (entity, {deltaTime}) {
+  update (entity, {deltaTime}, level) {
     if (this.requestTime > 0) {
       if (this.ready > 0) {
         entity.sounds.add('jump');
