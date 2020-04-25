@@ -1,141 +1,145 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Jumping game</title>
-    </head>
-    <body>
+<head>
+  <meta charset="utf-8">
+  <title>Jumping game</title>
+</head>
+<body>
 
-        <canvas id="gc" width="800" height="600"></canvas>
+<canvas id="gc" width="800" height="600"></canvas>
 
-        <script type="text/javascript">
+<script type="text/javascript">
 
-            var canv;
-            var ctx;
-            // Player position
-            var px = py = 200;
-            // Velocity
-            var xv = yv = 0;
-            // Gravity
-            var grav = 0.5;
-            // onGround
-            var onG = false;
-            // If a key if pressed or not
-            var holdLeft = holdRight = false;
-            // Row of platforms
-            var plat = [];
+// TODO: OOP approach
 
-            window.onload = function(){
-                canv = document.getElementById("gc");
-                ctx = canv.getContext("2d");
+let canv;
+let ctx;
+// Player position
+let px, py = 200;
+// Velocity
+let xv, yv = 0;
+// Gravity
+let grav = 0.5;
+// onGround
+let onG = false;
+// If a key if pressed or not
+let holdLeft, holdRight = false;
+// Row of platforms
+let plat = [];
 
-                setInterval(update, 1000/30);
+window.onload = function(){
+  canv = document.getElementById("gc");
+  ctx = canv.getContext("2d");
 
-                // Events to control the key's behaviour
-                document.addEventListener("keydown", keyDown);
-                document.addEventListener("keyup", keyUp);
+  setInterval(update, 1000/30);
 
-                // It will add 50 different platforms
-                for (var i = 0; i < 50; i++) {
-                    plat.push({
-                        // Position in X
-                        x: Math.random()*canv.width,
-                        // Position in Y
-                        y: Math.random()*canv.height,
-                        // Width
-                        w: Math.random()*100+30,
-                        // Height
-                        h: Math.random()*30+20
-                    });
-                }
+  // Events to control the key's behaviour
+  document.addEventListener("keydown", keyDown);
+  document.addEventListener("keyup", keyUp);
 
-            } // onload
+  // It will add 50 different platforms
+  for (let i = 0; i < 50; i++) {
+    plat.push({
+      // Position in X
+      x: Math.random()*canv.width,
+      // Position in Y
+      y: Math.random()*canv.height,
+      // Width
+      w: Math.random()*100+30,
+      // Height
+      h: Math.random()*30+20
+    });
+  }
+} // onload
 
-            // Function that update the current state
-            function update(){
-                // Move to left
-                if (holdLeft){
-                    xv = -2;
-                }
-                // move to right
-                if (holdRight){
-                    xv = 2;
-                }
-                // And add it to current both positions
-                px += xv;
-                py += yv;
+// Function that update the current state
+function update () {
+  // Move to left
+  if (holdLeft) {
+    xv = -2;
+  }
+  // move to right
+  if (holdRight) {
+    xv = 2;
+  }
 
-                // If the player is on onGround
-                if (onG){
-                    // Add some friction
-                    xv *= 0.8;
-                } else {
-                    // Add some speed (gravity)
-                    yv += grav;
-                }
+  // And add it to current both positions
+  px += xv;
+  py += yv;
 
-                onG = false;
-                for (var i = 0; i < 50; i++) {
-                    if (px > plat[i].x &&
-                        px < plat[i].x + plat[i].w &&
-                        py > plat[i].y &&
-                        py < plat[i].y + plat[i].h){
-                            py = plat[i].y;
-                            onG = true;
-                        } //if
-                } // for
+  // If the player is on onGround
+  if (onG) {
+    // Add some friction
+    xv *= 0.8;
+  } else {
+    // Add some speed (gravity)
+    yv += grav;
+  }
 
-                ctx.fillStyle = "black";
-                ctx.fillRect(0, 0, canv.width, canv.height);
+  onG = false;
 
-                ctx.fillStyle = "lime";
-                ctx.fillRect(px-5, py-20, 10, 20);
+  for (let i = 0; i < 50; i++) {
+    if (
+      px > plat[i].x &&
+      px < plat[i].x + plat[i].w &&
+      py > plat[i].y &&
+      py < plat[i].y + plat[i].h
+    ) {
+      py = plat[i].y;
+      onG = true;
+    }
+  }
 
-                ctx.fillStyle = "white";
-                // It will create the platforms
-                for (var i = 0; i < 50; i++) {
-                    ctx.fillRect(plat[i].x, plat[i].y, plat[i].w, plat[i].h);
-                } // for
-            } // update
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canv.width, canv.height);
 
+  ctx.fillStyle = "lime";
+  ctx.fillRect(px-5, py-20, 10, 20);
 
-            function keyDown(evt){
-                // Key code is clockwise
-                switch (evt.keyCode) {
-                    case 37:
-                        holdLeft = true;
-                        break;
-                    case 38:
-                        // if the player is on the ground
-                        if (onG){
-                            // Change velocity to go down
-                            yv = -10;
-                        }
-                        break;
-                    case 39:
-                        holdRight = true;
-                        break;
-                } // switch
-            } // keyRelease
+  ctx.fillStyle = "white";
+  // It will create the platforms
+  for (let i = 0; i < 50; i++) {
+    ctx.fillRect(plat[i].x, plat[i].y, plat[i].w, plat[i].h);
+  }
+}
 
 
-            function keyUp(evt){
-                switch (evt.keyCode) {
-                    case 37:
-                        holdLeft = false;
-                        break;
-                    case 38:
-                        //
-                        if (yv < -3){
-                            yv = -3;
-                        }
-                        break;
-                    case 39:
-                        holdRight = false;
-                        break;
-                } // switch
-            } // keyRelease
-        </script>
+  function keyDown (evt) {
+    // Key code is clockwise
+    switch (evt.keyCode) {
+      case 37:
+        holdLeft = true;
+      break;
+      case 38:
+        // if the player is on the ground
+        if (onG){
+          // Change velocity to go down
+          yv = -10;
+        }
+      break;
+      case 39:
+        holdRight = true;
+      break;
+    } // switch
+  } // keyRelease
 
-    </body>
+
+  function keyUp (evt) {
+    switch (evt.keyCode) {
+      case 37:
+        holdLeft = false;
+      break;
+      case 38:
+        if (yv < -3) {
+          yv = -3;
+        }
+      break;
+      case 39:
+        holdRight = false;
+      break;
+    }
+  }
+</script>
+
+</body>
 </html>
