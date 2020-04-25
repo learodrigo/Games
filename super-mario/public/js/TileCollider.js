@@ -1,9 +1,11 @@
 import TileResolver from './TileResolver.js';
 import { brick } from './tiles/brick.js';
+import { coin } from './tiles/coin.js';
 import { ground } from './tiles/ground.js';
 
 const handlers = {
   brick,
+  coin,
   ground
 };
 
@@ -75,8 +77,6 @@ export default class TileCollider {
       level
     };
     const handler = handlers[match.tile.type];
-    if (handler) {
-      handler[index](tileCollisionContext);
-    }
+    if (handler) handler[index](tileCollisionContext);
   }
 }

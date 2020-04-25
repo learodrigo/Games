@@ -19,6 +19,7 @@ async function main (canvas) {
 
   const loadLevel = await createLevelLoader(entityFactory);
   const level = await loadLevel('1-1');
+  // const level = await loadLevel('debug-coin');
   const camera = new Camera();
   const mario = createPlayer(entityFactory.mario());
   mario.player.name = 'MARIO';
@@ -52,4 +53,10 @@ async function main (canvas) {
 }
 
 const canvas = document.getElementById('screen');
-main(canvas);
+// As new chrome with auto play policy
+// https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
+const start = () => {
+  window.removeEventListener('click', start);
+  main(canvas);
+};
+window.addEventListener('click', start);

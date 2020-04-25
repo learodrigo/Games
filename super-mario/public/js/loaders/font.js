@@ -11,7 +11,7 @@ class Font {
 
   print (text, context, x, y) {
     [...text].forEach((char, pos) => {
-        this.sprites.draw(char, context, x + pos * this.size, y);
+      this.sprites.draw(char, context, x + pos * this.size, y);
     });
   }
 }
@@ -31,5 +31,6 @@ export function loadFont () {
       }
 
       return new Font(fontSprite, size);
-    });
+    }
+  );
 }

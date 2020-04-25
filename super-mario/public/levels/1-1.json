@@ -300,6 +300,13 @@
           ]
         },
         {
+          "name": "coin",
+          "type": "coin",
+          "ranges": [
+            [2, 5]
+          ]
+        },
+        {
           "name": "chocolate",
           "type": "ground",
           "ranges": [
