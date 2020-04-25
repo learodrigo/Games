@@ -1,5 +1,5 @@
-var
 // s goes for Sprite
+let
 s_bird,
 s_bg,
 s_fg,
@@ -12,21 +12,29 @@ s_buttons,
 s_numberS,
 s_numberB;
 
-
-function Sprite(img, x, y, width, height) {
+function Sprite (img, x, y, width, height) {
 	this.img = img;
-	this.x = x*2;
-	this.y = y*2;
-	this.width = width*2;
-	this.height = height*2;
+	this.x = x * 2;
+	this.y = y * 2;
+	this.width = width * 2;
+	this.height = height * 2;
 };
+
 Sprite.prototype.draw = function(ctx, x, y) {
-	ctx.drawImage(this.img, this.x, this.y, this.width, this.height,
-		x, y, this.width, this.height);
+	ctx.drawImage(
+		this.img,
+		this.x,
+		this.y,
+		this.width,
+		this.height,
+		x,
+		y,
+		this.width,
+		this.height
+	);
 };
 
-function initSprites(img) {
-
+function initSprites (img) {
 	s_bird = [
 		new Sprite(img, 156, 115, 17, 12),
 		new Sprite(img, 156, 128, 17, 12),
@@ -45,6 +53,7 @@ function initSprites(img) {
 		GameOver:   new Sprite(img, 59, 136, 94, 19),
 		GetReady:   new Sprite(img, 59, 155, 87, 22)
 	}
+
 	s_buttons = {
 		Rate:  new Sprite(img,  79, 177, 40, 14),
 		Menu:  new Sprite(img, 119, 177, 40, 14),
@@ -63,19 +72,29 @@ function initSprites(img) {
 	s_numberS.draw = s_numberB.draw = function(ctx, x, y, num, center, offset) {
 		num = num.toString();
 
-		var step = this.width + 2;
+		let step = this.width + 2;
 
-		if (center){
-			x = center - (num.length*step - 2) / 2;
-		}
-		if(offset){
-			x += step*(offset - num.length);
+		if (center) {
+			x = center - (num.length * step - 2) / 2;
 		}
 
-		for (var i = 0, len = num.length; i < len; i++) {
-			var n = parseInt(num[i]);
-			ctx.drawImage(img, step*n, this.y, this.width, this.height,
-				x, y, this.width, this.height)
+		if (offset) {
+			x += step * (offset - num.length);
+		}
+
+		for (let i = 0, len = num.length; i < len; i++) {
+			let n = parseInt(num[i]);
+			ctx.drawImage(
+				img,
+				step*n,
+				this.y,
+				this.width,
+				this.height,
+				x,
+				y,
+				this.width,
+				this.height
+			);
 			x += step;
 		}
 	}
