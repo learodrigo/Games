@@ -1,0 +1,1 @@
+apm install auto-indent atom-ternjs file-icons language-ejs language-babel linter linter-erb linter-csslint linter-js-yaml linter-js-standard

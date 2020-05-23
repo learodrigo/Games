@@ -1,0 +1,44 @@
+html {
+  font-family: monospace;
+}
+
+a:hover { text-decoration: line-through }
+
+.container {
+  display: flex;
+}
+
+button {
+  margin-bottom: 15px;
+}
+
+.grid {
+  background-color: yellow;
+  display: flex;
+  flex-wrap: wrap;
+  height: 400px;
+  width: 200px;
+}
+
+.grid div {
+  height: 20px;
+  width: 20px;
+}
+
+.tetramino {
+  background-color: blue;
+}
+
+.mini-grid {
+  background-color: yellow;
+  display: flex;
+  flex-wrap: wrap;
+  height: 80px;
+  margin-left: 20px;
+  width: 80px;
+}
+
+.mini-grid div {
+  height: 20px;
+  width: 20px;
+}
