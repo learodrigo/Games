@@ -5,16 +5,16 @@ import { loadAudioBoard } from '../loaders/audio.js';
 
 const HOLD_FIRE_TRASHOLD = 30;
 
-export function loadCannon (audioContext, entityFactories) {
+export function loadCannon (audioContext) {
   return loadAudioBoard('cannon', audioContext)
   .then(audio => {
-    return createCannonFactory(audio, entityFactories);
+    return createCannonFactory(audio);
   });
 }
 
-function createCannonFactory (audio, entityFactories) {
+function createCannonFactory (audio) {
   // This function emits (aka creates) a bullet from the cannon pos
-  function emitBullet (cannon, level) {
+  function emitBullet (cannon, gameContext, level) {
     let dir = 1;
     for (const player of findPlayers(level)) {
       // When Mario is too close form the cannon, it stops firing
@@ -31,7 +31,7 @@ function createCannonFactory (audio, entityFactories) {
       }
     }
     // Create instance of bullet
-    const bullet = entityFactories.bullet();
+    const bullet = gameContext.entityFactory.bullet();
     // Copy the position from the cannon
     bullet.pos.copy(cannon.pos);
     // Adding vel + dir
