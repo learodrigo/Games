@@ -254,5 +254,13 @@
       "name": "cannon",
       "pos": [96, 112]
     }
+  ],
+
+  "triggers": [
+    {
+      "name": "1-2",
+      "pos": [64, 64],
+      "type": "goto"
+    }
   ]
 }

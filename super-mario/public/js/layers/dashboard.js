@@ -17,13 +17,12 @@ function getTimerTrait (level) {
 export function createDashboardLayer (font, level) {
   const LINE1 = font.size;
   const LINE2 = font.size * 2;
-  const playerTrait = getPlayerTrait(level);
-  const name = playerTrait.name;
   const timerTrait = getTimerTrait(level);
-  const time = timerTrait.currentTime;
 
   return function drawDashboard (context) {
-    font.print(name, context, 16, LINE1);
+    const playerTrait = getPlayerTrait(level);
+
+    font.print(playerTrait.name, context, 16, LINE1);
     font.print(playerTrait.score.toString().padStart(6, "0"), context, 16, LINE2);
 
     // Lives counter debugging
@@ -34,6 +33,6 @@ export function createDashboardLayer (font, level) {
     font.print(level.name, context, 160, LINE2);
 
     font.print("TIME", context, 208, LINE1);
-    font.print(time.toFixed().toString().padStart(3, "0"), context, 216, LINE2);
+    font.print(timerTrait.currentTime.toFixed().toString().padStart(3, "0"), context, 216, LINE2);
   };
 }

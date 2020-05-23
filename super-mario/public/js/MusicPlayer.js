@@ -14,13 +14,16 @@ export default class MusicPlayer {
   }
 
   playTrack (name) {
+    this.pauseAll();
+    const audio = this.tracks.get(name);
+    audio.play();
+    return audio;
+  }
+
+  pauseAll () {
     // Object.values() returns an array of object's own enumerable property values
     for (const audio of this.tracks.values()) {
       audio.pause();
     }
-
-    const audio = this.tracks.get(name);
-    audio.play();
-    return audio;
   }
 }

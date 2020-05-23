@@ -11,6 +11,10 @@ export default class MusicController {
     this.player = player;
   }
 
+  pause () {
+    this.player.pauseAll();
+  }
+
   playTheme (speed = 1) {
     const audio = this.player.playTrack('main');
     audio.playbackRate = speed;
