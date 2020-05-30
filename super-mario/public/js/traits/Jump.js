@@ -1,8 +1,9 @@
-import { Sides, Trait } from '../Entity.js';
+import { Sides } from '../Entity.js';
+import Trait from '../Trait.js';
 
 export default class Jump extends Trait {
   constructor () {
-    super('jump');
+    super();
     this.ready = 0;
     this.duration = 0.3;
     this.engageTime = 0;
@@ -28,7 +29,8 @@ export default class Jump extends Trait {
   obstruct (entity, side) {
     if (side === Sides.BOTTOM) {
       this.ready = 1;
-    } else if (side === Sides.TOP) {
+    }
+    else if (side === Sides.TOP) {
       this.cancel();
     }
   }

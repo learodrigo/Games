@@ -9,7 +9,8 @@ export function setupMouseControl (canvas, entity, camera) {
             event.offsetX + camera.pos.x,
             event.offsetY + camera.pos.y
           );
-      } else if (
+      }
+      else if (
         event.buttons === 2 &&
         lastEvent &&
         lastEvent.buttons === 2 &&

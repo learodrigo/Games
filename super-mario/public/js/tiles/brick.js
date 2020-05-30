@@ -6,9 +6,9 @@ function handleX ({entity, match}) {
     if (entity.bounds.right > match.x1) {
       entity.obstruct(Sides.RIGHT, match);
     }
-
+  }
   // Left to right
-  } else if (entity.vel.x < 0) {
+  else if (entity.vel.x < 0) {
     if (entity.bounds.left < match.x2) {
       entity.obstruct(Sides.LEFT, match);
     }
@@ -21,9 +21,9 @@ function handleY ({entity, match, resolver, gameContext, level}) {
     if (entity.bounds.bottom > match.y1) {
       entity.obstruct(Sides.BOTTOM, match);
     }
-
+  }
   // Bottom to top
-  } else if (entity.vel.y < 0) {
+  else if (entity.vel.y < 0) {
       // Checking the player
     if (entity.player) {
       const grid = resolver.matrix;

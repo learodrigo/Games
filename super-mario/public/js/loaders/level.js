@@ -1,9 +1,9 @@
-import { Matrix } from '../math.js';
 import Entity from '../Entity.js';
 import Level from '../Level.js';
 import LevelTimer from '../traits/LevelTimer.js';
+import { Matrix } from '../math.js';
 import Trigger from '../traits/Trigger.js';
-import { createSpriteLayer } from '../layers/sprite.js';
+import { createSpriteLayer } from '../layers/sprites.js';
 import { createBackgroundLayer } from "../layers/background.js";
 import { loadJSON } from "../loaders.js";
 import { loadMusicSheet } from "./music.js";
@@ -13,12 +13,6 @@ function createTimer () {
   const timer = new Entity();
   timer.addTrait(new LevelTimer());
   return timer;
-}
-
-function createTrigger () {
-  const entity = new Entity();
-  entity.addTrait(new Trigger());
-  return entity;
 }
 
 function loadPattern (name) {
@@ -65,11 +59,14 @@ function setupTriggers (levelSpec, level) {
   if (!levelSpec.triggers) return;
 
   for (const triggerSpec of levelSpec.triggers) {
-    const entity = createTrigger();
+    const trigger = new Trigger();
 
-    entity.trigger.conditions.push((entity, touches, gc, level) => {
+    trigger.conditions.push((entity, touches, gc, level) => {
       level.events.emit(Level.EVENT_TRIGGER, triggerSpec, entity, touches);
     });
+
+    const entity = new Entity();
+    entity.addTrait(trigger);
     entity.size.set(64, 64);
     entity.pos.set(triggerSpec.pos[0], triggerSpec.pos[1]);
     level.entities.add(entity);
@@ -113,6 +110,7 @@ function createGrid (tiles, patterns) {
 function* expandSpan (xStart, xLen, yStart, yLen) {
   const xEnd = xStart + xLen;
   const yEnd = yStart + yLen;
+
   for (let x = xStart; x < xEnd; ++x) {
     for (let y = yStart; y < yEnd; ++y) {
       yield {x, y};
@@ -124,19 +122,21 @@ function expandRange (range) {
   if (range.length === 4) {
     const [xStart, xLen, yStart, yLen] = range;
     return expandSpan(xStart, xLen, yStart, yLen);
-  } else if (range.length === 3) {
+  }
+  else if (range.length === 3) {
     const [xStart, xLen, yStart] = range;
     return expandSpan(xStart, xLen, yStart, 1);
-  } else if (range.length === 2) {
+  }
+  else if (range.length === 2) {
     const [xStart, yStart] = range;
     return expandSpan(xStart, 1, yStart, 1);
   }
 }
 
 function* expandRanges (ranges) {
-    for (const range of ranges){
-        yield* expandRange(range);
-    }
+  for (const range of ranges){
+    yield* expandRange(range);
+  }
 }
 
 // The function* declaration (function keyword followed by an asterisk)

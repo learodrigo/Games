@@ -18,9 +18,20 @@ export function createBackgroundLayer (level, tiles, sprites) {
       if (col) {
         col.forEach((tile, y) => {
           if (sprites.animations.has(tile.name)) {
-            sprites.drawAnim(tile.name, context, x - startIndex, y, level.totalTime);
+            sprites.drawAnim(
+              tile.name,
+              context,
+              x - startIndex,
+              y,
+              level.totalTime
+            );
           } else {
-            sprites.drawTile(tile.name, context, x - startIndex, y);
+            sprites.drawTile(
+              tile.name,
+              context,
+              x - startIndex,
+              y
+            );
           }
         });
       }
@@ -32,6 +43,10 @@ export function createBackgroundLayer (level, tiles, sprites) {
     const drawFrom = resolver.toIndex(camera.pos.x);
     const drawTo = drawFrom + drawWidth;
     redraw(drawFrom, drawTo);
-    context.drawImage(buffer, -camera.pos.x % 16, -camera.pos.y);
+    context.drawImage(
+      buffer,
+      Math.floor(-camera.pos.x % 16),
+      Math.floor(-camera.pos.y)
+    );
   };
 }

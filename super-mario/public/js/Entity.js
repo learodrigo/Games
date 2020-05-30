@@ -1,45 +1,15 @@
-import { Vec2 } from "./math.js";
-import BoundingBox from "./BoundingBox.js"
 import AudioBoard from "./AudioBoard.js"
+import BoundingBox from "./BoundingBox.js"
 import EventBuffer from "./EventBuffer.js";
+import Trait from "./Trait.js";
+import { Vec2 } from "./math.js";
 
 export const Sides = {
-  TOP: Symbol('top'),
+  TOP:    Symbol('top'),
   BOTTOM: Symbol('bottom'),
-  LEFT: Symbol('left'),
-  RIGHT: Symbol('right'),
+  LEFT:   Symbol('left'),
+  RIGHT:  Symbol('right'),
 };
-
-export class Trait {
-  static EVENT_TASK = Symbol('taks');
-
-  constructor (name) {
-    this.NAME = name;
-    this.listeners = [];
-  }
-
-  finalize (entity) {
-    this.listeners = this.listeners.filter(listener => {
-      entity.events.process(listener.name, listener.callback);
-      return --listener.count;
-    });
-  }
-
-  listen (name, callback, count = Infinity) {
-    const listener = {name, callback, count};
-    this.listeners.push(listener);
-  }
-
-  queue (task) {
-    this.listen(Trait.EVENT_TASK, task, 1);
-  }
-
-  collides (us, them) {}
-
-  obstruct () {}
-
-  update () {}
-}
 
 export default class Entity {
   constructor () {
@@ -55,13 +25,11 @@ export default class Entity {
     this.bounds = new BoundingBox(this.pos, this.size, this.offset);
 
     this.lifetime = 0;
-    this.traits = [];
+    this.traits = new Map();
   }
 
   addTrait (trait) {
-    this.traits.push(trait);
-    this[trait.NAME] = trait;
-    trait.entity = this;
+    this.traits.set(trait.constructor, trait);
   }
 
   collides (candidate) {
@@ -79,7 +47,6 @@ export default class Entity {
       trait.finalize(this);
     });
 
-    // Clearing the events
     this.events.clear();
   }
 
