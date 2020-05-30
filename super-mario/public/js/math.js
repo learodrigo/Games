@@ -5,9 +5,7 @@ export class Matrix {
 
   delete (x, y) {
     const col = this.grid[x];
-    if (col) {
-      delete col[y];
-    };
+    if (col) delete col[y];
   }
 
   forEach (callback) {
@@ -24,10 +22,7 @@ export class Matrix {
   }
 
   set (x, y, value) {
-    if (!this.grid[x]) {
-      this.grid[x] = [];
-    }
-
+    if (!this.grid[x]) this.grid[x] = [];
     this.grid[x][y] = value;
   }
 }

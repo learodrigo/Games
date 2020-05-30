@@ -18,9 +18,20 @@ export function createBackgroundLayer (level, tiles, sprites) {
       if (col) {
         col.forEach((tile, y) => {
           if (sprites.animations.has(tile.name)) {
-            sprites.drawAnim(tile.name, context, x - startIndex, y, level.totalTime);
+            sprites.drawAnim(
+              tile.name,
+              context,
+              x - startIndex,
+              y,
+              level.totalTime
+            );
           } else {
-            sprites.drawTile(tile.name, context, x - startIndex, y);
+            sprites.drawTile(
+              tile.name,
+              context,
+              x - startIndex,
+              y
+            );
           }
         });
       }

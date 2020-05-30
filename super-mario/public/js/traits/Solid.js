@@ -1,8 +1,9 @@
-import { Sides, Trait } from '../Entity.js';
+import { Sides } from '../Entity.js';
+import Trait from '../Trait.js';
 
 export default class Solid extends Trait {
   constructor () {
-    super('solid');
+    super();
     this.obstructs = true;
   }
 

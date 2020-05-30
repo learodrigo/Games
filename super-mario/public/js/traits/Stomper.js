@@ -1,11 +1,12 @@
-import { Sides, Trait } from '../Entity.js';
+import Killable from './Killable.js';
+import Trait from '../Trait.js';
 
 export default class Stomper extends Trait {
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
   static EVENT_STOMP = Symbol('stomp');
 
   constructor () {
-    super('stomper');
+    super();
     this.bounceSpeed = 400;
   }
 
@@ -15,7 +16,7 @@ export default class Stomper extends Trait {
   }
 
   collides (us, them) {
-    if (!them.killable || them.killable.dead){
+    if (!them.traits.has(Killable) || them.traits.get(Killable).dead){
       return;
     }
 

@@ -11,5 +11,5 @@ export function loadImage (url) {
 
 export function loadJSON (url) {
   return fetch(url)
-    .then(r => r.json());
+  .then(r => r.json());
 }

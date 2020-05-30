@@ -1,11 +1,11 @@
-import { Trait } from '../Entity.js';
+import Trait from '../Trait.js';
 
 export default class LevelTimer extends Trait {
   static EVENT_TIMER_HURRY = Symbol('timer hurry');
   static EVENT_TIMER_OK = Symbol('timer ok');
 
   constructor () {
-    super('levelTimer');
+    super();
     this.totalTime = 300;
     this.currentTime = this.totalTime;
     this.hurryTime = 100;

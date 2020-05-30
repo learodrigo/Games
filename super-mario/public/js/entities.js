@@ -18,5 +18,5 @@ export function loadEntites (audioContext) {
       loadBullet(audioContext).then(addAs("bullet")),
       loadCannon(audioContext).then(addAs("cannon")),
   ])
-    .then(() => entityFactories);
+  .then(() => entityFactories);
 }

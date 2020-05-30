@@ -1,32 +1,30 @@
-import Entity, { Sides, Trait } from "../Entity.js";
+import Entity from "../Entity.js";
+import Killable from "../traits/Killable.js";
 import PendulumMove from "../traits/PendulumMove.js";
 import Physics from "../traits/Physics.js";
 import Solid from "../traits/Solid.js";
-import Killable from "../traits/Killable.js";
+import Stomper from "../traits/Stomper.js";
+import Trait from "../Trait.js";
 import { loadSpriteSheet } from "../loaders/sprite.js";
 
 export function loadGoomba () {
   return loadSpriteSheet("goomba")
-    .then(createGoombaFactory);
+  .then(createGoombaFactory);
 }
 
 class Behaviour extends Trait {
-  constructor () {
-    super("behaviour");
-  }
-
   // Feature detection
   collides (us, them) {
-    if (us.killable.dead) {
+    if (us.traits.get(Killable).dead) {
       return;
     }
 
-    if (them.stomper) {
+    if (them.traits.has(Stomper)) {
       if (them.vel.y > us.vel.y) {
-        us.killable.kill();
-        us.pendulumMove.speed = 0;
+        us.traits.get(Killable).kill();
+        us.traits.get(PendulumMove).speed = 0;
       } else {
-        them.killable.kill();
+        them.traits.get(Killable).kill();
       }
     }
   }
@@ -36,7 +34,7 @@ function createGoombaFactory (sprite) {
   const walkAnim = sprite.animations.get("walk");
 
   function routeAnim (goomba) {
-    if (goomba.killable.dead) {
+    if (goomba.traits.get(Killable).dead) {
       return "flat";
     }
 

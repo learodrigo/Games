@@ -23,9 +23,11 @@ export default class TileCollider {
 
     if (entity.vel.x > 0) {
       x = entity.bounds.right;
-    } else if (entity.vel.x < 0) {
+    }
+    else if (entity.vel.x < 0) {
       x = entity.bounds.left;
-    } else {
+    }
+    else {
       return;
     }
 
@@ -48,9 +50,11 @@ export default class TileCollider {
 
     if (entity.vel.y > 0) {
       y = entity.bounds.bottom;
-    } else if (entity.vel.y < 0) {
+    }
+    else if (entity.vel.y < 0) {
       y = entity.bounds.top;
-    } else {
+    }
+    else {
       return;
     }
 

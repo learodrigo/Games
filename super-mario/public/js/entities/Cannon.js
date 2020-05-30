@@ -16,7 +16,7 @@ function createCannonFactory (audio) {
   // This function emits (aka creates) a bullet from the cannon pos
   function emitBullet (cannon, gameContext, level) {
     let dir = 1;
-    for (const player of findPlayers(level)) {
+    for (const player of findPlayers(level.entities)) {
       // When Mario is too close form the cannon, it stops firing
       if (
         player.pos.x > cannon.pos.x - HOLD_FIRE_TRASHOLD &&
