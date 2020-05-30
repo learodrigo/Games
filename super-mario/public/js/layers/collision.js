@@ -7,7 +7,8 @@ function createEntityLayer (entities) {
         entity.bounds.left - camera.pos.x,
         entity.bounds.top - camera.pos.y,
         entity.size.x,
-        entity.size.y);
+        entity.size.y
+      );
       context.stroke();
     });
   };
@@ -30,7 +31,8 @@ function createTileCandidateLayer (tileResolver) {
       context.rect(
         x * tileSize - camera.pos.x,
         y * tileSize - camera.pos.y,
-        tileSize, tileSize);
+        tileSize, tileSize
+      );
       context.stroke();
     });
 
