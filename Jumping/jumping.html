@@ -31,6 +31,7 @@ window.onload = function(){
   canv = document.getElementById("gc");
   ctx = canv.getContext("2d");
 
+  // Frames per second
   setInterval(update, 1000/30);
 
   // Events to control the key's behaviour
@@ -41,13 +42,13 @@ window.onload = function(){
   for (let i = 0; i < 50; i++) {
     plat.push({
       // Position in X
-      x: Math.random()*canv.width,
+      x: Math.random() * canv.width,
       // Position in Y
-      y: Math.random()*canv.height,
+      y: Math.random() * canv.height,
       // Width
-      w: Math.random()*100+30,
+      w: Math.random() * 100 + 30,
       // Height
-      h: Math.random()*30+20
+      h: Math.random() * 30 + 20
     });
   }
 } // onload
