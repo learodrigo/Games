@@ -1,2 +1,2 @@
-super-mario/node_modules
-super-mario/npm-debug.log
+**/node_modules
+**/npm-debug.log

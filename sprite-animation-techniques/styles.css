@@ -1,0 +1,27 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#canvas {
+  height: 400px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+}
+
+.controls {
+  left: 50%;
+  position: absolute;
+  top: 50px;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.controls, select, option {
+  font-size: 20px;
+}
